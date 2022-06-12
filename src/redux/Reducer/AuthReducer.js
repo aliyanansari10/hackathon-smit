@@ -1,7 +1,8 @@
-import { STUDENT_SIGNIN, ADMIN_SIGNIN } from "../types";
+import { STUDENT_SIGNIN, ADMIN_SIGNIN, ADMIN_SIGNOUT } from "../types";
 
 const initialState = {
   uid: null,
+  userName: "",
   isLoggedIn: false,
   admin: false,
 };
@@ -19,9 +20,20 @@ const AuthReducer = (state = initialState, action) => {
     case ADMIN_SIGNIN: {
       return {
         ...state,
-        uid: action.payload,
+        uid: action.payload.uid,
+        userName: action.payload.userName,
         isLoggedIn: true,
         admin: true,
+      };
+    }
+    case ADMIN_SIGNOUT: {
+      console.log("Logout Dispatch Called");
+      return {
+        ...state,
+        uid: action.payload.uid,
+        userName: action.payload.userName,
+        isLoggedIn: false,
+        admin: false,
       };
     }
 

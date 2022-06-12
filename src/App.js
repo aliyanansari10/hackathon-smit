@@ -7,11 +7,17 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useDispatch, useSelector } from "react-redux";
 import { GET_FEEDS, GET_COURSES } from "./redux/types";
 import NavbarComponent from "./components/NavbarComponent";
-import StudentSignin from "./pages/StudentSignin";
-import StudentSignUp from "./pages/StudentSignUp";
-import StudentHome from "./pages/StudentHome";
-import AdminSignin from "./pages/AdminSignin";
-import AdminHome from "./pages/AdminHome";
+import StudentSignin from "./pages/Student/StudentSignin";
+import StudentSignUp from "./pages/Student/StudentSignUp";
+import StudentHome from "./pages/Student/StudentHome";
+import AdminSignin from "./pages/Admin/AdminSignin";
+import AdminHome from "./pages/Admin/AdminHome";
+import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
+import AddAdmin from "./pages/Admin/AddAdmin";
+import AdminCourses from "./pages/Admin/AdminCourses";
+import AdminLeaves from "./pages/Admin/AdminLeaves";
+import AddStudents from "./pages/Admin/AddStudents";
+import AdminSettings from "./pages/Admin/AdminSettings";
 
 function App() {
   const dispatch = useDispatch();
@@ -56,14 +62,70 @@ function App() {
 
   return (
     <div>
-      <NavbarComponent />
+      {/* <NavbarComponent /> */}
       <Routes>
-        <Route path="/" element={<Feed feedsData={feeds} />} />
+        <Route
+          path="/"
+          element={
+            <>
+              <NavbarComponent />
+              <Feed feedsData={feeds} />
+            </>
+          }
+        />
         <Route path="/student/signin" element={<StudentSignin />} />
         <Route path="/student/signup" element={<StudentSignUp />} />
         <Route path="/student/home" element={<StudentHome />} />
         <Route path="/admin/signin" element={<AdminSignin />} />
-        <Route path="/admin/home" element={<AdminHome />} />
+        {/* <Route path="/admin/home" element={<AdminHome />} /> */}
+        <Route
+          path="/admin/home"
+          element={
+            <AdminDashboard>
+              <AdminHome />
+            </AdminDashboard>
+          }
+        />
+        <Route
+          path="/admin/courses"
+          element={
+            <AdminDashboard>
+              <AdminCourses />
+            </AdminDashboard>
+          }
+        />
+        <Route
+          path="/admin/leaves"
+          element={
+            <AdminDashboard>
+              <AdminLeaves />
+            </AdminDashboard>
+          }
+        />
+        <Route
+          path="/admin/addstudents"
+          element={
+            <AdminDashboard>
+              <AddStudents />
+            </AdminDashboard>
+          }
+        />
+        <Route
+          path="/admin/addadmin"
+          element={
+            <AdminDashboard>
+              <AddAdmin />
+            </AdminDashboard>
+          }
+        />
+        <Route
+          path="/admin/settings"
+          element={
+            <AdminDashboard>
+              <AdminSettings />
+            </AdminDashboard>
+          }
+        />
       </Routes>
     </div>
   );

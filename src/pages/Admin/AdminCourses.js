@@ -1,26 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { Button, Card, Modal, Form } from "react-bootstrap";
+import { Card, Modal, Form } from "react-bootstrap";
+import Button from "@mui/material/Button";
 import { collection, addDoc, updateDoc, doc } from "firebase/firestore";
-import { db } from "../Firebase";
-import { ADD_COURSE, EDIT_COURSE } from "../redux/types";
-import CourseCard from "../components/CourseCard";
+import { db } from "../../Firebase";
+import { ADD_COURSE, EDIT_COURSE } from "../../redux/types";
+import CourseCard from "../../components/CourseCard";
+import CircularProgress from "@mui/material/CircularProgress";
 
-function AdminHome() {
-  const navigate = useNavigate();
+export default function AdminCourses() {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.AuthReducer);
   const courses = useSelector((state) => state.CourseReducer.courses);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [description, setDescription] = useState("");
   const [tutor, setTutor] = useState("");
-  const [prerequisite, setPrerequisite] = useState("");
   const [duration, setDuration] = useState("");
   const [title, setTitle] = useState("");
 
   const courseToggleHandler = async (id, val) => {
+    setLoading(true);
     try {
       await updateDoc(doc(db, "Courses", id), {
         disabled: !val,
@@ -30,25 +30,20 @@ function AdminHome() {
         type: EDIT_COURSE,
         payload: id,
       });
+      setLoading(false);
     } catch (error) {
       console.log("err", error);
-      alert("Somethinf went wrong during update course");
+      alert("Something went wrong during update course");
+      setLoading(false);
     }
   };
 
   const setClearState = () => {
     setDescription("");
     setTutor("");
-    setPrerequisite("");
     setDuration("");
     setTitle("");
   };
-
-  useEffect(() => {
-    if (user.uid === null || !user?.isLoggedIn || !user?.admin) {
-      navigate("/admin/signin");
-    }
-  }, [user]);
 
   const onSubmitForm = async (e) => {
     e.preventDefault();
@@ -57,7 +52,6 @@ function AdminHome() {
       title,
       description,
       tutor,
-      prerequisite,
       duration,
       disabled: false,
       Enrolled: [],
@@ -84,9 +78,12 @@ function AdminHome() {
   };
 
   return (
-    <>
+    <div style={{ marginTop: 80 }}>
       <Button
-        className="m-3"
+        // className="m-3"
+        fullWidth
+        variant="outlined"
+        sx={{ mt: 3, mb: 2 }}
         onClick={() => {
           setShowModal(true);
         }}
@@ -133,15 +130,6 @@ function AdminHome() {
               />
             </Form.Group>
             <Form.Group className="mb-3" controlId="formBasicCode">
-              <Form.Label>Course Prerequisite</Form.Label>
-              <Form.Control
-                type="text"
-                value={prerequisite}
-                onChange={(e) => setPrerequisite(e.target.value)}
-                placeholder="Course Prerequisite"
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="formBasicCode">
               <Form.Label>Course Duration</Form.Label>
               <Form.Control
                 type="text"
@@ -152,28 +140,35 @@ function AdminHome() {
             </Form.Group>
 
             <Button
-              variant="primary"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
               type="submit"
               disabled={
                 loading ||
                 !title.trim().length ||
                 !duration.trim().length ||
                 !description.trim().length ||
-                !tutor.trim().length ||
-                !prerequisite.trim().length
+                !tutor.trim().length
               }
             >
-              {loading ? "...." : "Submit"}
+              {loading ? (
+                <CircularProgress size={20} sx={{ color: "#fff" }} />
+              ) : (
+                "Submit"
+              )}
             </Button>
           </Form>
         </Modal.Body>
       </Modal>
       {courses?.length &&
         courses?.map((course) => (
-          <CourseCard course={course} courseToggle={courseToggleHandler} />
+          <CourseCard
+            course={course}
+            courseToggle={courseToggleHandler}
+            loading={loading}
+          />
         ))}
-    </>
+    </div>
   );
 }
-
-export default AdminHome;
