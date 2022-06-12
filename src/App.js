@@ -5,7 +5,7 @@ import { collection, getDocs } from "firebase/firestore";
 import Feed from "./pages/Feed";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useDispatch, useSelector } from "react-redux";
-import { GET_FEEDS, GET_COURSES } from "./redux/types";
+import { GET_FEEDS, GET_COURSES, GET_LEAVES, GET_ADMINS } from "./redux/types";
 import NavbarComponent from "./components/NavbarComponent";
 import StudentSignin from "./pages/Student/StudentSignin";
 import StudentSignUp from "./pages/Student/StudentSignUp";
@@ -18,7 +18,9 @@ import AdminCourses from "./pages/Admin/AdminCourses";
 import AdminLeaves from "./pages/Admin/AdminLeaves";
 import AddStudents from "./pages/Admin/AddStudents";
 import AdminSettings from "./pages/Admin/AdminSettings";
-
+import StudentLeaves from "./pages/Student/StudentLeaves";
+import StudentDashboard from "./pages/StudentDashboard/StudentDashboard";
+import StudentCourses from "./pages/Student/StudentCourses";
 function App() {
   const dispatch = useDispatch();
   const feeds = useSelector((state) => state?.FeedReducer?.feeds);
@@ -54,9 +56,41 @@ function App() {
     }
   };
 
+  const getLeaves = async () => {
+    const leaveExist = await getDocs(collection(db, "Leaves"));
+    let leavesArr = [];
+    if (!!leaveExist?.docs.length) {
+      leaveExist.docs.forEach((leave) => {
+        leavesArr.push({ ...leave.data(), id: leave.id });
+      });
+
+      dispatch({
+        type: GET_LEAVES,
+        payload: leavesArr,
+      });
+    }
+  };
+
+  const getAdmins = async () => {
+    const adminExist = await getDocs(collection(db, "admin"));
+    let adminsArr = [];
+    if (!!adminExist?.docs.length) {
+      adminExist.docs.forEach((admin) => {
+        adminsArr.push({ ...admin.data(), id: admin.id });
+      });
+
+      dispatch({
+        type: GET_ADMINS,
+        payload: adminsArr,
+      });
+    }
+  };
+
   useEffect(() => {
     getData();
     getCourses();
+    getLeaves();
+    getAdmins();
     console.log("Use Effect Functions Called");
   }, []);
 
@@ -75,7 +109,30 @@ function App() {
         />
         <Route path="/student/signin" element={<StudentSignin />} />
         <Route path="/student/signup" element={<StudentSignUp />} />
-        <Route path="/student/home" element={<StudentHome />} />
+        <Route
+          path="/student/home"
+          element={
+            <StudentDashboard>
+              <StudentHome />
+            </StudentDashboard>
+          }
+        />
+        <Route
+          path="/student/leaves"
+          element={
+            <StudentDashboard>
+              <StudentLeaves />
+            </StudentDashboard>
+          }
+        />
+        <Route
+          path="/student/courses"
+          element={
+            <StudentDashboard>
+              <StudentCourses />
+            </StudentDashboard>
+          }
+        />
         <Route path="/admin/signin" element={<AdminSignin />} />
         {/* <Route path="/admin/home" element={<AdminHome />} /> */}
         <Route

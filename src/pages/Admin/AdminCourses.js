@@ -91,6 +91,7 @@ export default function AdminCourses() {
         Add Course
       </Button>
       <Modal
+        style={{ top: 50 }}
         show={showModal}
         onHide={() => {
           setShowModal(false);

@@ -30,7 +30,7 @@ import { useNavigate } from "react-router-dom";
 import { db, auth } from "../../Firebase";
 import { signOut } from "firebase/auth";
 import { ADMIN_SIGNOUT } from "../../redux/types";
-import "./AdminDashboard.css";
+import "./StudentDashboard.css";
 
 const drawerWidth = 240;
 
@@ -146,13 +146,13 @@ export default function AdminDashboard(props) {
             </IconButton>
             <IconButton color="inherit">
               <Badge
-                badgeContent={"Admin"}
+                badgeContent={"Student"}
                 color="secondary"
                 style={{ marginRight: 5, marginBottom: 5 }}
               >
                 <SupervisedUserCircleRoundedIcon />
               </Badge>
-              <Typography>{user.userName}</Typography>
+              <Typography>{user?.userName}</Typography>
             </IconButton>
             <div style={{ width: "100%", textAlign: "right" }}>
               <IconButton
@@ -185,7 +185,7 @@ export default function AdminDashboard(props) {
                 // fontStyle: "italic",
               }}
             >
-              Admin Dashboard
+              Student Dashboard
             </Typography>
             <IconButton onClick={toggleDrawer}>
               <ChevronLeftIcon />
